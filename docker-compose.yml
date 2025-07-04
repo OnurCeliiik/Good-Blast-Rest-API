@@ -1,0 +1,85 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: match3-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: match3_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - match3-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: match3-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - match3-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: match3-app
+    restart: always
+    environment:
+      DB_HOST: match3-postgres
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: match3_db
+      DB_PORT: 5432
+      REDIS_ADDR: match3-redis:6379
+      REDIS_PASSWORD: ""
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - match3-network
+    ports:
+      - "8080:8080"
+  
+  test:
+    build: 
+      context: .
+      target: builder
+    container_name: match3-test
+    command: go test -v ./...
+    environment:
+      DB_HOST: match3-postgres
+      DB_USER: postgres
+      DB_PASSWORD: password
+      DB_NAME: testdb
+      DB_PORT: 5432
+      REDIS_ADDR: match3-redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - match3-network
+
+networks:
+  match3-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

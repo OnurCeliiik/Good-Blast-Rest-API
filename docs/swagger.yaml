@@ -1,0 +1,198 @@
+basePath: /
+definitions:
+  models.User:
+    properties:
+      coins:
+        type: integer
+      country:
+        type: string
+      id:
+        type: string
+      level:
+        type: integer
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API backend for the game
+  title: Good Blast Match 3 REST API
+  version: "1.0"
+paths:
+  /leaderboard/:
+    get:
+      consumes:
+      - application/json
+      description: It gets the rank of the user from the tournament they are in
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Tournament Rank
+      tags:
+      - Leaderboards
+  /tournaments/:
+    get:
+      consumes:
+      - application/json
+      description: It gets a single tournament
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get Tournament
+      tags:
+      - Tournaments
+    post:
+      consumes:
+      - application/json
+      description: It finishes all tournaments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Finish All Tournaments
+      tags:
+      - Tournaments
+    put:
+      consumes:
+      - application/json
+      description: It updates the score of the user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update Score
+      tags:
+      - Tournaments
+  /users/:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the user completely
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete user
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      description: Gets all users with their info
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Gets all users
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user with username, country, level, coins and ID
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create user
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Updates the user with new information
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update user
+      tags:
+      - Users
+swagger: "2.0"
